@@ -16,18 +16,18 @@ interface WorkCardInterface {
   label: WorkStatus
   key: number
   isChecked: boolean
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (status: WorkStatus) => void
 }
 const WorkCard = ({label, key, isChecked, onChange} : WorkCardInterface ) => {
   return (
-    <div key={key} className="rounded-lg shadow-sm p-2  mt-2 mb-2 flex flex-row justify-between content-start">
+    <div key={key} onClick={(e) => { e.stopPropagation(); onChange(label)}} className={`rounded-lg shadow-sm p-2 cursor-pointer hover:bg-red-100 transition-colors mt-2 mb-2 mb-2 flex flex-row justify-between content-start ${isChecked && 'border border-red-500'}`}>
         <input
           type="radio"
           id={label}
           name="profile_status"
           value={label}
           checked={isChecked}
-          onChange={onChange}
+          onChange={(e) => { e.stopPropagation(); onChange(label)}}
         />
       <label htmlFor={label} className="w-36">
         {STATUS_LABELS[label]}
@@ -48,8 +48,7 @@ export const WorkStatusCard = ({ className = "" }: { className?: string }) => {
     dispatch(updateWorkStatus(globalWorkStatus))
   }, [globalWorkStatus])
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let nextStatus = e.target.value as WorkStatus
+  const handleStatusChange = (nextStatus: WorkStatus) => {
     dispatch(updateWorkStatus(nextStatus));
     setGlobalWorkStatus(nextStatus)
   };
