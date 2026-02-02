@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useUserProfile } from "../../shared/hooks/useUserProfile";
+import { useUserWorkStatusGlobal } from "../../shared/hooks";
 import { DashboardRootState, DashboardDispatch } from "../store";
 import { updateWorkStatus } from "../store/userSlice";
 import { WorkStatus } from "../../shared/types";
@@ -41,15 +41,17 @@ const WorkCard = ({label, key, isChecked, onChange} : WorkCardInterface ) => {
 export const WorkStatusCard = ({ className = "" }: { className?: string }) => {
   const { profile } = useSelector((state: DashboardRootState) => state.user);
   const dispatch = useDispatch<DashboardDispatch>();
-  const [userState, setUserState] = useUserProfile(profile.workStatus)
+
+  const [globalWorkStatus, setGlobalWorkStatus] = useUserWorkStatusGlobal({status:profile.workStatus as WorkStatus})
 
   useEffect(()=> {
-    dispatch(updateWorkStatus(userState))
-  }, [userState])
+    dispatch(updateWorkStatus(globalWorkStatus))
+  }, [globalWorkStatus])
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(updateWorkStatus(e.target.value as WorkStatus));
-    setUserState(e.target.value)
+    let nextStatus = e.target.value as WorkStatus
+    dispatch(updateWorkStatus(nextStatus));
+    setGlobalWorkStatus(nextStatus)
   };
 
   const Cards = Object.keys(STATUS_LABELS).map((entry, index) => WorkCard({key:index, label: entry as WorkStatus, isChecked: profile.workStatus === entry , onChange: handleStatusChange}))

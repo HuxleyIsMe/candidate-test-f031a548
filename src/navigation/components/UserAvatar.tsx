@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useUserProfile } from "../../shared/hooks/useUserProfile";
+import { useUserWorkStatusGlobal } from "../../shared/hooks";
 import { NavRootState, NavDispatch } from "../store";
 import { updateWorkStatus } from "../store/userSlice";
 import { WorkStatus } from "../../shared/types";
@@ -14,11 +14,12 @@ export const UserAvatar = () => {
   const dispatch = useDispatch<NavDispatch>();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [userState, setUserState] = useUserProfile(profile.workStatus)
+
+  const [globalWorkStatus, setGlobalWorkStatus] = useUserWorkStatusGlobal({status:profile.workStatus as WorkStatus})
 
   useEffect(()=> {
-      dispatch(updateWorkStatus(userState))
-  }, [userState])
+      dispatch(updateWorkStatus(globalWorkStatus))
+  }, [globalWorkStatus])
 
 
   const statusLabels: Record<WorkStatus, string> = {
@@ -29,8 +30,8 @@ export const UserAvatar = () => {
 
   const handleStatusChange = (status: WorkStatus) => {
     dispatch(updateWorkStatus(status));
-    setUserState(status)
     setDropdownOpen(false);
+    setGlobalWorkStatus(status)
   };
 
   return (
