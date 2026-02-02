@@ -1,13 +1,25 @@
 import { useSelector, useDispatch } from "react-redux";
+import { useUserProfile } from "../../shared/hooks/useUserProfile";
 import { NavRootState, NavDispatch } from "../store";
 import { updateWorkStatus } from "../store/userSlice";
 import { WorkStatus } from "../../shared/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+
+
 
 export const UserAvatar = () => {
+
   const { profile } = useSelector((state: NavRootState) => state.user);
   const dispatch = useDispatch<NavDispatch>();
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userState, setUserState] = useUserProfile(profile.workStatus)
+
+  useEffect(()=> {
+      dispatch(updateWorkStatus(userState))
+  }, [userState])
+
 
   const statusLabels: Record<WorkStatus, string> = {
     looking: "Currently looking for work",
@@ -17,6 +29,7 @@ export const UserAvatar = () => {
 
   const handleStatusChange = (status: WorkStatus) => {
     dispatch(updateWorkStatus(status));
+    setUserState(status)
     setDropdownOpen(false);
   };
 

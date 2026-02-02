@@ -10,6 +10,7 @@ const dispatchNavEvent = (path: string) => {
   window.dispatchEvent(event);
 };
 
+
 export const Navigation = () => {
   // Handle link clicks to broadcast navigation changes
   const handleLinkClick = (path: string) => () => {

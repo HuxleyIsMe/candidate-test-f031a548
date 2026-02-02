@@ -1,13 +1,15 @@
 import { useSelector, useDispatch } from "react-redux";
+import { useUserProfile } from "../../shared/hooks/useUserProfile";
 import { DashboardRootState, DashboardDispatch } from "../store";
 import { updateWorkStatus } from "../store/userSlice";
 import { WorkStatus } from "../../shared/types";
+import { useEffect } from "react";
 
-  const STATUS_LABELS: Record<WorkStatus, string> = {
-    looking: "Currently looking for work",
-    passive: "Passively looking for work",
-    not_looking: "Don't want to hear about work",
-  };
+const STATUS_LABELS: Record<WorkStatus, string> = {
+  looking: "Currently looking for work",
+  passive: "Passively looking for work",
+  not_looking: "Don't want to hear about work",
+};
 
 
 interface WorkCardInterface {
@@ -17,7 +19,6 @@ interface WorkCardInterface {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 const WorkCard = ({label, key, isChecked, onChange} : WorkCardInterface ) => {
-
   return (
     <div key={key} className="rounded-lg shadow-sm p-2  mt-2 mb-2 flex flex-row justify-between content-start">
         <input
@@ -40,10 +41,15 @@ const WorkCard = ({label, key, isChecked, onChange} : WorkCardInterface ) => {
 export const WorkStatusCard = ({ className = "" }: { className?: string }) => {
   const { profile } = useSelector((state: DashboardRootState) => state.user);
   const dispatch = useDispatch<DashboardDispatch>();
+  const [userState, setUserState] = useUserProfile(profile.workStatus)
 
+  useEffect(()=> {
+    dispatch(updateWorkStatus(userState))
+  }, [userState])
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(updateWorkStatus(e.target.value as WorkStatus));
+    setUserState(e.target.value)
   };
 
   const Cards = Object.keys(STATUS_LABELS).map((entry, index) => WorkCard({key:index, label: entry as WorkStatus, isChecked: profile.workStatus === entry , onChange: handleStatusChange}))
