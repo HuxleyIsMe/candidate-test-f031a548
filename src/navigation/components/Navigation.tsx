@@ -13,6 +13,7 @@ const dispatchNavEvent = (path: string) => {
 export const Navigation = () => {
   // Handle link clicks to broadcast navigation changes
   const handleLinkClick = (path: string) => () => {
+    console.log(' i am talking')
     // Dispatch the event without preventing default behavior
     dispatchNavEvent(path);
   };
