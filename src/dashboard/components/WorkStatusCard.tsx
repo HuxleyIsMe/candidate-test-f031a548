@@ -4,7 +4,16 @@ import { DashboardRootState, DashboardDispatch } from "../store";
 import { updateWorkStatus } from "../store/userSlice";
 import { WorkStatus } from "../../shared/types";
 import { useEffect } from "react";
+import workStatusLooking from "../assets/workstatus_looking.png"
+import workStatusPassive from "../assets/workstatus_passive.png"
+import workStatusNotLooking from "../assets/workstatus_not_looking.png"
 
+
+const imageMap = {
+  looking: workStatusLooking,
+  passive: workStatusPassive,
+  not_looking: workStatusNotLooking
+}
 const STATUS_LABELS: Record<WorkStatus, string> = {
   looking: "Currently looking for work",
   passive: "Passively looking for work",
@@ -20,7 +29,7 @@ interface WorkCardInterface {
 }
 const WorkCard = ({label, key, isChecked, onChange} : WorkCardInterface ) => {
   return (
-    <div key={key} onClick={(e) => { e.stopPropagation(); onChange(label)}} className={`rounded-lg shadow-sm p-2 cursor-pointer hover:bg-red-100 transition-colors mt-2 mb-2 mb-2 flex flex-row justify-between content-start ${isChecked && 'border border-red-500'}`}>
+    <div key={key} onClick={(e) => { e.stopPropagation(); onChange(label)}} className={`rounded-lg shadow-sm  w-full p-2 cursor-pointer h-28 hover:bg-red-100 transition-colors mt-2 mb-2 mb-2 flex flex-row items-center justify-around ${isChecked && 'border border-red-500'}`}>
         <input
           type="radio"
           id={label}
@@ -29,9 +38,13 @@ const WorkCard = ({label, key, isChecked, onChange} : WorkCardInterface ) => {
           checked={isChecked}
           onChange={(e) => { e.stopPropagation(); onChange(label)}}
         />
-      <label htmlFor={label} className="w-36">
+      <label htmlFor={label} className="w-36 p-2">
         {STATUS_LABELS[label]}
       </label>
+
+      <div className="h-full flex items-center">
+        <img src={imageMap[label]} className="max-h-full max-w-full object-contain"  alt={`Cat illustrations ${label}`} />;
+      </div>
     </div>
   )
 
